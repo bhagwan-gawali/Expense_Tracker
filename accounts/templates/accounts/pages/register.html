@@ -1,0 +1,72 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %} New User Registration {% endblock %}
+
+{% block navlist %}
+
+<li class="nav-item">
+  <a class="nav-link active" aria-current="page" href="{% url 'accounts:login' %}">Login</a>
+</li>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mt-3">
+
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-4 col-xl-4">
+            {% if messages %}
+              {% for message in messages %}
+                  {% if message.tags %}
+                       <div class="alert alert-{{ message.tags }} msg fade show fw-light" role="alert">{{ message }}</div>
+                  {% else %}
+                      <div class="alert alert-info msg fade show fw-light" role="alert">{{ message }}</div>
+                  {% endif %}
+              {% endfor %}
+          {% endif %}
+
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                  <label for="username" class="form-label form-label-sm">Username</label>
+                  {{ form.username }}
+                  {% if form.username.errors %}
+                      {% for error in form.username.errors %}
+                        <div class="form-text text-danger"> {{ error }} </div>
+                      {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="first_name" class="form-label">First Name</label>
+                        {{ form.first_name }}
+                    </div>
+                    <div class="col">
+                        <label for="last_name" class="form-label">Last Name</label>
+                        {{ form.last_name }}
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                      {% for error in form.email.errors %}
+                        <div class="form-text text-danger"> {{ error }} </div>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                <div class="mb-3">
+                  <label for="password" class="form-label">Password</label>
+                  {{ form.password }}
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">Register</button>
+              </form>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-8 col-xl-8">
+            
+        </div>
+    </div>
+</div>
+
+{% endblock %}

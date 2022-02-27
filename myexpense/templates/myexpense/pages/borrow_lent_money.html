@@ -1,0 +1,222 @@
+{% extends 'myexpense/base.html' %}
+
+{% block title %} Borrow/Lent Money {% endblock %}
+
+{% block navlist %}
+
+<li class="nav-item">
+  <a class="nav-link" aria-current="page" href="{% url 'myexpense:dashboard' %}">Dashboard</a>
+</li>
+
+  <li class="nav-item">
+    <a class="nav-link" aria-current="page" href="{% url 'myexpense:manage_borrow_lent' %}">Manage borrow/lent</a>
+  </li>
+
+{% endblock %}
+
+{% block right_side_nav %}
+
+<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    <li class="nav-item">
+      <a class="nav-link active" aria-current="page" href="{% url 'accounts:logout' %}">Logout</a>
+    </li>
+  </ul>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mt-2">
+  
+
+  <div class="row mt-4">
+    <div class="col-sm-12, col-md-12 col-lg-5 col-xl-5">
+
+      <div class="row">
+        <div class="col">
+
+          <div class="card mb-1">
+            <div class="card-body">
+              <h5 class="card-title">Money</h5>
+              <h6 class="card-subtitle mt-3 text-muted">Total Borrowed Money : <span class="text-danger">{% if borrowed_money %} {{ borrowed_money }} {% endif %}</span></h6>
+              <h6 class="card-subtitle mt-3 text-muted">Total Lented Money : <span class="text-success">{% if lent_money %} {{ lent_money }} {% endif %}</span></h6>
+            
+            </div>
+          </div>
+
+            <div class="card card-body">
+
+              <form method="post">
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col">
+                    <label for="personname" class="form-label form-label-sm"><small>Person Name</small></label>
+                    {{ form2.p_name }}
+                    {% if form2.p_name.errors %}
+                      {% for error in form2.p_name.errors %}
+                        <p class="fw-light text-danger"><small>{{ error }}</small></p>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                  <div class="col">
+                    <label for="amount" class="form-label"><small>Amount</small></label>
+                    {{ form2.amount }}
+                    {% if form2.amount.errors %}
+                      {% for error in form2.amount.errors %}
+                        <p class="fw-light text-danger"><small>{{ error }}</small></p>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                  <div class="col">
+                    <label for="date" class="form-label"><small>Date</small></label>
+                    {{ form2.date_time }}
+                    {% if form2.date_time.errors %}
+                      {% for error in form2.date_time.errors %}
+                        <p class="fw-light text-danger"><small>{{ error }}</small></p>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <label for="mobilenumber" class="form-label"><small>Mobile Number</small></label>
+                    {{ form2.m_number }}
+                    {% if form2.m_number.errors %}
+                      {% for error in form2.m_number.errors %}
+                        <p class="fw-light text-danger"><small>{{ error }}</small></p>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                  <div class="col">
+                    <label for="categorytype" class="form-label"><small>Category Type</small></label>
+                    {{ form2.cat_type }}
+                    {% if form2.cat_type.errors %}
+                      {% for error in form2.cat_type.errors %}
+                        <p class="fw-light text-danger"><small>{{ error }}</small></p>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                  
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <label for="address" class="form-label"><small>Address</small></label>
+                    {{ form2.address }}
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <div class="col">
+                    {% if messages %}
+                      {% for message in messages %}
+                         <span class="fw-light {% if message.tags %} text-{{ message.tags }} {% endif %}"> {{ message }} </span>
+                      {% endfor %}
+                    {% endif %}
+                    <div class="float-end">
+                      <button type="submit" class="btn btn-primary btn-sm">Ok...</button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+
+            </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      
+      {% if page_obj %}
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Person Name</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Mobile No.</th>
+                    <th scope="col">Borrow/Lent</th>
+                    <th scope="col">Status</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                {% for tx in page_obj %}
+                  {% if tx.status == '1' %}
+                  <tr class="text-decoration-line-through">
+                    <th><small>{{ tx.p_name|title }}</small></th>
+                    <td>{{ tx.amount }}</td>
+                    <td>{{ tx.date_time }}</td>
+                    <td>{{ tx.m_number }}</td>
+                    {% if tx.cat_type == '1' %}
+                        <td>Lent</td>
+                    {% elif tx.cat_type == '0' %}
+                        <td>Borrow</td>
+                    {% endif %}
+                    {% if tx.status == '0' %}
+                      <td>Not Paid</td>
+                    {% else %}
+                      <td>Paid</td>
+                    {% endif %}
+                    
+                  </tr>
+                  {% elif tx.status == '0' %}
+                  <tr>
+                    <th><small>{{ tx.p_name|title }}</small></th>
+                    <td>{{ tx.amount }}</td>
+                    <td>{{ tx.date_time }}</td>
+                    <td>{{ tx.m_number }}</td>
+                    {% if tx.cat_type == '1' %}
+                        <td>Lent</td>
+                    {% elif tx.cat_type == '0' %}
+                        <td>Borrow</td>
+                    {% endif %}
+                    {% if tx.status == '0' %}
+                      <td>Not Paid</td>
+                    {% else %}
+                      <td>Paid</td>
+                    {% endif %}
+                    
+                  </tr>
+                  {% endif %}
+
+                {% endfor %}
+                </tbody>
+              </table>
+              <div class="float-end">
+                <nav aria-label="Page navigation example">
+                  
+                  <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                      </a>
+                    </li>
+                    {% endif %}
+                        
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                      </a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+                    {% endif %}
+                  </ul>
+                  
+                </nav>
+                <span class="fw-lighter">
+                  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+              </div>
+
+            
+            {% endif %}
+
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

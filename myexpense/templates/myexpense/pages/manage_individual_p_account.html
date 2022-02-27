@@ -1,0 +1,114 @@
+{% extends 'myexpense/base.html' %}
+
+{% block title %} Manage Individual Person Account {% endblock %}
+
+{% block navlist %}
+<li class="nav-item">
+  <a class="nav-link" aria-current="page" href="{% url 'myexpense:dashboard' %}">Dashboard</a>
+</li>
+
+<li class="nav-item">
+  <a class="nav-link" aria-current="page" href="{% url 'myexpense:individual_person_account' %}">Individual Person Account</a>
+</li>
+{% endblock %}
+
+{% block content %}
+  <div class="container-fluid mt-3">
+      <div class="row">
+          <div class="col">
+
+             <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">{{ p_data.p_name|title }}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">{{ p_data.p_number }}</h6>
+                  <h6 class="card-subtitle mb-2">
+                    Amount : {{ p_data.amount }} 
+                    {% if p_data.amount < 0 %}
+                     <span class="fw-lighter text-danger">
+                       <small>Customer paid to owner</small>
+                    </span>
+                    {% elif p_data.amount > 0 %} 
+                    <span class="fw-lighter text-success">
+                      <small>Owner paid to Customers</small>
+                   </span>
+                    {% endif %}
+                  
+                  </h6>
+                  <p class="card-text"> Address :<br/> {{ p_data.address }}.</p>
+                </div>
+              </div>
+
+              <form method="post">
+                {% csrf_token %}
+                <div class="mb-2">
+                  <div class="row">
+                    <div class="col">
+                      <label for="originalamount" class="form-label"><small>Product Amount</small></label>
+                      <input type="text" class="form-control form-control-sm" name="original_amount" />
+                    </div>
+
+                    <div class="col">
+                      <label for="paidamount" class="form-label"><small>Paid Amount</small></label>
+                      <input type="text" class="form-control form-control-sm" name="paid_amount" />
+                    </div>
+                  </div>
+                                      
+                </div>
+              
+                <div class="mb-2">
+                    <label for="notes" class="form-label"><small>Notes</small></label>
+                    <textarea class="form-control form-control-sm" name="extra_notes" rows=3></textarea>
+                </div>
+
+                <input type="submit" class="btn btn-sm btn-secondary" name="submit" value="Submit"/>
+
+             </form>
+
+          </div>
+          <div class="col">
+
+            {% if page_obj %}
+            <h6>Transaction Made On This Account</h6>
+            <ul class="list-group">
+            {% for tx in page_obj %}
+            <li class="list-item">Product Price: {{ tx.original_amount }} Paid Price: {{ tx.paid_amount }}  -- {{ tx.extra_note }} -- {{ tx.date_time }}</li>
+            {% endfor %}
+            </ul>
+
+            <div class="float-end">
+              <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                  {% if page_obj.has_previous %}
+                  <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
+                    </a>
+                  </li>
+                  {% endif %}
+                      
+                  {% if page_obj.has_next %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                  </li>
+                  <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+                  {% endif %}
+                </ul>
+                
+              </nav>
+              <span class="fw-lighter">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+              </span>
+            </div>
+            {% endif %}
+
+          </div>
+          <div class="col">
+
+
+          </div>
+      </div>
+  </div>
+{% endblock %}

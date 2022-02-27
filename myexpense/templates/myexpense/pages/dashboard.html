@@ -1,0 +1,135 @@
+{% extends 'myexpense/base.html' %}
+
+{% block title %} Dashboard {% endblock %}
+
+{% block navlist %}
+
+<li class="nav-item">
+  <a class="nav-link " aria-current="page" href="{% url 'myexpense:exp_accounts' %}">Accounts</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link " aria-current="page" href="{% url 'myexpense:transactions' %}">My Transactions</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link " aria-current="page" href="{% url 'myexpense:borrow_lent' %}">Borrow/Lent Money</a>
+</li>
+
+<li class="nav-item">
+  <a class="nav-link " aria-current="page" href="{% url 'myexpense:individual_person_account' %}">Individual Person Account</a>
+</li>
+
+{% endblock %}
+
+{% block right_side_nav %}
+
+<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    <li class="nav-item">
+      <a class="nav-link active" aria-current="page" href="{% url 'accounts:logout' %}">Logout</a>
+    </li>
+  </ul>
+
+{% endblock %}
+
+{% block content %}
+
+{% if cur_acc %}
+<div class="container-fluid mt-2">
+  <div class="row">
+    <div class="col-sm-12 col-md-12 col-lg-3 col-xl-3">
+      
+      <div class="card">
+        <div class="card-body">  
+          <h6 class="card-subtitle mb-2 text-muted">Account Detail's</h6>
+          <p class="card-text">
+            <span class="fw-light">Account Name : {{ cur_acc.acc_name|title }}</span><br/>
+            <span class="fw-light">Initial Amt. : {{ cur_acc.initial_amount }} </span><br/>
+            <span class="fw-light">Remaining Amt. : {{ cur_acc.rem_amount }} </span> 
+          </p>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-sm-12, col-md-12 col-lg-6 col-xl-6">
+      <div class="row">
+        <div class="col">
+
+            <div class="card card-body">
+              <form method="post">
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col">
+                    <label for="addspendamount" class="form-label form-label-sm"><small>Add/Spend</small></label>
+                    {{ form1.add_spend }}
+                  </div>
+                  
+                  <div class="col">
+                    <label for="amount" class="form-label"><small>Amount</small></label>
+                    {{ form1.amount }}
+                    {% if form1.amount.errors %}
+                      {% for error in form1.amount.errors %}
+                        <span class="fw-light text-danger"><small>{{ error }}</small></span>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                  <div class="col">
+                    <label for="amount" class="form-label"><small>Date</small></label>
+                    {{ form1.date_time }}
+
+                    {% if form1.date_time.errors %}
+                      {% for error in form1.date_time.errors %}
+                        <span class="fw-light text-danger"><small>{{ error }}</small></span>
+                      {% endfor %}
+                    {% endif %}
+
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <label for="personname" class="form-label"><small>Person Name</small></label>
+                    {{ form1.person_name }}
+                  </div>
+                  <div class="col">
+                    <label for="category" class="form-label"><small>Category</small></label>
+                    {{ form1.category }}
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <label for="extranotes" class="form-label"><small>Extra Note's</small></label>
+                    {{ form1.extra_note }}
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <div class="col">
+                    {% if messages %}
+                      {% for message in messages %}
+                         <span class="fw-light {% if message.tags %} text-{{ message.tags }} {% endif %}"> {{ message }} </span>
+                      {% endfor %}
+                    {% endif %}
+                    <div class="float-end">
+                      <button type="submit" class="btn btn-primary btn-sm">Make Transaction</button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+        
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% else %}
+
+<div class="container mt-3">
+  <p>You Do not have any Account yet..</p>
+</div>
+
+{% endif %}
+
+{% endblock %}

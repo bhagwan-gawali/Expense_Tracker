@@ -1,0 +1,171 @@
+{% extends 'myexpense/base.html' %}
+
+{% block title %} Manage Borrow/Lent {% endblock %}
+
+{% block navlist %}
+
+  <li class="nav-item">
+    <a class="nav-link" aria-current="page" href="{% url 'myexpense:borrow_lent' %}">Borrow/Lent</a>
+  </li>
+
+{% endblock %}
+
+{% block right_side_nav %}
+
+<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    <li class="nav-item">
+      <a class="nav-link active" aria-current="page" href="{% url 'accounts:logout' %}">Logout</a>
+    </li>
+  </ul>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mt-2">
+  
+
+  <div class="row mt-4">
+    <div class="col-sm-12, col-md-12 col-lg-5 col-xl-5">
+
+      <div class="row">
+        <div class="col">
+            <form class="d-flex" method="post">
+                {% csrf_token %}
+                <input class="form-control me-2" type="search" name="p_name" placeholder="Enter Person Name here..." aria-label="Search">
+                <button class="btn btn-outline-success" type="submit" name="submit" value="yes">Search</button>
+              </form>
+
+        </div>
+      </div>
+
+      <div class="row mt-2">
+        <div class="col">
+          <a href="{% url 'myexpense:show_all_records' %}" class="btn btn-sm btn-primary">show all records</a>
+        </div>
+        <div class="col">
+          {% if messages %}
+             {{ messages }}
+          {% endif %}
+        </div>
+        <div class="col">
+          
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col">
+      
+      {% if page_obj %}
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Person Name</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Mobile No.</th>
+                    <th scope="col">Borrow/Lent</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                {% for tx in page_obj %}
+                  {% if tx.status == '1' %}
+                  <tr >
+                    <th scope="row" class="text-decoration-line-through">{{ tx.p_name|title }}</th>
+                    <td class="text-decoration-line-through">{{ tx.amount }}</td>
+                    <td class="text-decoration-line-through">{{ tx.date_time }}</td>
+                    <td class="text-decoration-line-through">{{ tx.m_number }}</td>
+                    {% if tx.cat_type == '1' %}
+                        <td class="text-decoration-line-through">Lent</td>
+                    {% elif tx.cat_type == '0' %}
+                        <td class="text-decoration-line-through">Borrow</td>
+                    {% endif %}
+
+                    {% if tx.status == '0' %}
+                      <td>Not Paid</td>
+                    {% elif tx.status == '1' %}
+                      <td>Paid</td>
+                    {% endif %}
+
+                    <td>
+                      <form action="{% url 'myexpense:make_notpaid_transaction' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="tx_id" value="{{ tx.id }}" />
+                        <input type="submit" class="btn btn-outline-success btn-sm" value="Not Paid" />
+                      </form>
+                    </td>
+                                      
+                  </tr>
+                  {% elif tx.status == '0' %}
+                  <tr>
+                    <th scope="row">{{ tx.p_name|title }}</th>
+                    <td>{{ tx.amount }}</td>
+                    <td>{{ tx.date_time }}</td>
+                    <td>{{ tx.m_number }}</td>
+                    {% if tx.cat_type == '1' %}
+                        <td>Lent</td>
+                    {% elif tx.cat_type == '0' %}
+                        <td>Borrow</td>
+                    {% endif %}
+
+                    {% if tx.status == '0' %}
+                      <td>Not Paid</td>
+                    {% elif tx.status == '1' %}
+                      <td>Paid</td>
+                    {% endif %}
+
+                    <td>
+                      <form action="{% url 'myexpense:make_paid_transaction' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="tx_id" value="{{ tx.id }}" />
+                        <input type="submit" class="btn btn-outline-success btn-sm" value="Paid" />
+                      </form>
+                    </td>
+                                      
+                  </tr>
+                  {% endif %}
+                {% endfor %}
+                </tbody>
+              </table>
+              <div class="float-end">
+                <nav aria-label="Page navigation example">
+                  
+                  <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                      </a>
+                    </li>
+                    {% endif %}
+                        
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                      </a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+                    {% endif %}
+                  </ul>
+                  
+                </nav>
+                <span class="fw-lighter">
+                  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+              </div>
+
+            {% else %}
+              <p class="text-danger">No Record Found....</p>
+            {% endif %}
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

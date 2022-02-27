@@ -1,0 +1,157 @@
+{% extends 'myexpense/base.html' %}
+
+{% block title %} Accounts Page {% endblock %}
+
+{% block navlist %}
+
+<li class="nav-item">
+  <a class="nav-link active" aria-current="page" href="{% url 'myexpense:dashboard' %}">Dashboard</a>
+</li>
+
+{% endblock %}
+
+{% block right_side_nav %}
+
+<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    <li class="nav-item">
+      <a class="nav-link active" aria-current="page" href="{% url 'accounts:logout' %}">Logout</a>
+    </li>
+  </ul>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mt-3 ">
+   <div class="row">
+     <div class="col-sm-12 col-md-12 col-lg-3 col-xl-3">
+    <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Create New Exp. Account</h5>
+          <h6 class="card-subtitle mb-2">
+              {% if messages %}
+                 {% for message in messages %}
+                 <p {% if message.tags %} class="fw-normal text-{{ message.tags }}" {% endif %}> {{ message }} </p>
+                 {% endfor %}
+              {% endif %}
+
+              <p class="text-muted">Default Account : {{ def_acc.acc_name|title }} </p>
+          </h6>
+           <form action="" method="post">
+               {% csrf_token %}
+          <div class="row">
+            <div class="col">
+                <label for="accountname" class="form-label"> Name</label>
+              {{ form.acc_name }}
+              {% if form.acc_name.errors %}
+                    {% for error in form.acc_name.errors %}
+                    <p class="fw-light text-danger">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            </div>
+            <div class="row">
+
+            <div class="col">
+                <label for="accountname" class="form-label"> Type</label>
+              {{ form.acc_type }}
+              {% if form.acc_type.errors %}
+                    {% for error in form.acc_type.errors %}
+                    <p class="fw-light text-danger">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+                <label for="accountname" class="form-label"> Amount</label>
+                {{ form.initial_amount }}
+                {% if form.initial_amount.errors %}
+                    {% for error in form.initial_amount.errors %}
+                    <p class="fw-light text-danger">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            </div>
+
+          <div class="row">
+          <div class="col">
+            <button type="submit" class="btn btn-primary btn-sm">Create Acc.</button>
+          </div>
+          </div>
+
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-sm-12 col-md-12 col-lg-8 col-xl-8">
+        <div class="row">
+          {% if page_obj %}
+          <div class="col">
+            
+            <h6>All Accounts</h6>
+            <ul class="list-group list-group-flush">
+              {% for acc in page_obj %}
+               {% if acc.status == 1 %}
+              <li class="list-group-item active">
+                 {{ acc.acc_name|title }} 
+                  <div class="float-end"><a class="text-white" href="{% url 'myexpense:set_default' acc.id %}">set_default</a></div>
+                </li>
+                {% else %}
+                <li class="list-group-item">
+                  {{ acc.acc_name|title }} 
+                   <div class="float-end"><a href="{% url 'myexpense:set_default' acc.id %}">set_default</a></div>
+                 </li>
+                {% endif %}
+
+              {% endfor %}
+            </ul>
+            
+
+            <div class="float-end">
+              <nav aria-label="Page navigation example">
+                
+                <ul class="pagination">
+                  {% if page_obj.has_previous %}
+                  <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
+                    </a>
+                  </li>
+                  {% endif %}
+                      
+                  {% if page_obj.has_next %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                  </li>
+                  <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+                  {% endif %}
+                </ul>
+                
+              </nav>
+              <span class="fw-lighter">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+              </span>
+            </div>
+            
+          </div>
+          {% endif %}
+
+          <div class="col">
+            Extra Info.
+          </div>
+        </div>
+    </div>
+    
+    </div>
+
+</div>
+
+
+{% endblock %}

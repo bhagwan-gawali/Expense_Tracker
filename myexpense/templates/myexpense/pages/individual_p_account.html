@@ -1,0 +1,61 @@
+{% extends 'myexpense/base.html' %}
+
+{% block title %} Individual Person Account {% endblock %}
+
+{% block navlist %}
+<li class="nav-item">
+  <a class="nav-link" aria-current="page" href="{% url 'myexpense:dashboard' %}">Dashboard</a>
+</li>
+{% endblock %}
+
+{% block content %}
+
+   <div class="container-fluid mt-2">
+       <div class="row">
+           <div class="col-sm-12 col-md-12 col-lg-4 col-xl-4">
+               <form action="" method="post">
+                   {% csrf_token %}
+                {{ form.as_p }}
+
+                <button type="submit" class="btn btn-sm btn-secondary">Submit</button>
+               </form>
+               
+           </div>
+           <div class="col">   
+                <span>Accounts</span>
+                  
+                  {% if m_data %}
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Mobile No.</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        {% for money in m_data %}
+                      <tr>
+                        <th scope="row">{{ money.p_name}}</th>
+                        <td>{{ money.p_number }}</td>
+                        <td>
+                          {% if money.amount < 0 %}
+                            <span class="text-danger">{{ money.amount }}</span>
+                          {% elif money.amount > 0 %}
+                          <span class="text-success">{{ money.amount }}</span>
+                          {% else %}
+                           {{ money.amount }}
+                          {% endif %}
+                        </td>
+                        <td><a href="{% url 'myexpense:manage_individual_person_account' money.id %}">view data</a></td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  {% endif %}
+           </div>
+       </div>
+   </div>
+
+{% endblock %}

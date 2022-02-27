@@ -1,0 +1,88 @@
+{% extends 'myexpense/base.html' %}
+
+{% block title %}
+  All Transactions
+{% endblock %}
+
+{% block navlist %}
+
+<li class="nav-item">
+  <a class="nav-link active" aria-current="page" href="{% url 'myexpense:dashboard' %}">Dashboard</a>
+</li>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-8 col-xl-8">
+            {% if page_obj %}
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Person Name</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Add/Spend</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Note</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                {% for tx in page_obj %}
+                  <tr>
+                    <th scope="row">{{ tx.person_name }}</th>
+                    <td>{{ tx.amount }}</td>
+                    <td>{{ tx.date_time }}</td>
+                    {% if tx.add_spend == 1 %}
+                        <td>Added</td>
+                    {% elif tx.add_spend == 0 %}
+                        <td>Spend</td>
+                    {% endif %}
+                    <td>{{ tx.category|title }}</td>
+                    <td>{{ tx.extra_note }}</td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+              <div class="float-end">
+                <nav aria-label="Page navigation example">
+                  <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                      </a>
+                    </li>
+                    {% endif %}
+                        
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                      </a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+                    {% endif %}
+                  </ul>
+                  
+                </nav>
+                <span class="fw-lighter">
+                  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+              </div>
+
+            {% endif %}
+        </div>
+
+        <div class="col">
+          <!-- adad -->
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
