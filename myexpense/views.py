@@ -219,6 +219,14 @@ def individual_p_account(request):
     form = IndividualPersonForm(request.POST or None)
     money_data = TrackMoney.objects.filter(user=request.user).order_by('-id').all()
 
+    try:
+        paginator = Paginator(money_data, 5)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+    except:
+        pass
+
+
     if form.is_valid():
         p_name = form.cleaned_data.get('p_name')
         address = form.cleaned_data.get('address')
@@ -230,7 +238,7 @@ def individual_p_account(request):
         return redirect(reverse('myexpense:individual_person_account'))
         
 
-    data = {'form': form, 'm_data': money_data}
+    data = {'form': form, 'm_data': money_data, 'page_obj': page_obj}
 
     return render(request, 'myexpense/pages/individual_p_account.html', data)
 

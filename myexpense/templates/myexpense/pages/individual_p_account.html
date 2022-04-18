@@ -24,7 +24,12 @@
            <div class="col">   
                 <span>Accounts</span>
                   
-                  {% if m_data %}
+                  
+
+
+                  <!-- extra -->
+                  {% if page_obj %}
+                  
                   <table class="table">
                     <thead>
                       <tr>
@@ -35,7 +40,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                        {% for money in m_data %}
+                        {% for money in page_obj %}
                       <tr>
                         <th scope="row">{{ money.p_name}}</th>
                         <td>{{ money.p_number }}</td>
@@ -53,6 +58,35 @@
                       {% endfor %}
                     </tbody>
                   </table>
+                  </ul>
+      
+                  <div class="float-end">
+                    <nav aria-label="Page navigation example">
+                      <ul class="pagination">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                        <li class="page-item">
+                          <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                          </a>
+                        </li>
+                        {% endif %}
+                            
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                          <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                          </a>
+                        </li>
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+                        {% endif %}
+                      </ul>
+                      
+                    </nav>
+                    <span class="fw-lighter">
+                      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+                  </div>
                   {% endif %}
            </div>
        </div>
