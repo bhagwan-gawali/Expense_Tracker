@@ -25,7 +25,7 @@
 	- install the required packages in **requirements.txt** file with pip.
 	- now run the local development server provided by the django.
 	- run the command
-		- python manage.py makemigration
+		- python manage.py makemigrations
 		- python manage.py migrate
 	- that's it.
 	
