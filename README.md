@@ -21,8 +21,13 @@
 - ### How to Install on local machine
 	- Create virtual environmnet with python-env
 	- clone the github directory or download it
-	- install the required packages in requirements.txt file with pip.
+	- activate the virtual environment.
+	- install the required packages in **requirements.txt** file with pip.
 	- now run the local development server provided by the django.
+	- run the command
+		- python manage.py makemigration
+		- python manage.py migrate
+	- that's it.
 	
 - ### Sections
 	- #### Accounts:
